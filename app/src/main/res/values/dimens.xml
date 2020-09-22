@@ -6,4 +6,6 @@
     <dimen name="textSizeMedium">16sp</dimen>
     <dimen name="textSizeSmall">12sp</dimen>
     <dimen name="default_icon_size">32dp</dimen>
+    <dimen name="bookHeight">150dp</dimen>
+    <dimen name="bookWidth">100dp</dimen>
 </resources>

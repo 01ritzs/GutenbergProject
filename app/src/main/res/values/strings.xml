@@ -2,4 +2,12 @@
     <string name="app_name">GutenbergProject</string>
     <string name="message">A social cataloging website that allows you to freely search its database of books, annotations, and reviews.</string>
     <string name="gutenberg_project">Gutenberg Project</string>
+    <string name="fiction">Fiction</string>
+    <string name="drama">Drama</string>
+    <string name="humor">Humor</string>
+    <string name="politics">Politics</string>
+    <string name="adventure">Adventure</string>
+    <string name="history">History</string>
+    <string name="philosophy">Philosophy</string>
+    <string name="search">Search</string>
 </resources>
