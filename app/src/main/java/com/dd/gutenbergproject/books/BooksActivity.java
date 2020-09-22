@@ -36,16 +36,18 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
     private ImageView ivCancel;
     private RecyclerView rvBooks;
     BookListAdapter adapter;
+    private String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_books);
         parent = findViewById(R.id.parent);
-        initRecyclerView();
+        category = getIntent().getStringExtra(Constants.IntentKeys.CATEGORY);
         initHeader();
+        initRecyclerView();
         GetBooksTask task = new GetBooksTask();
-        task.execute();
+        task.execute(category);
     }
 
     private void initRecyclerView() {
@@ -61,7 +63,6 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
         ivBack = findViewById(R.id.ivBack);
         ivCancel = findViewById(R.id.ivCancel);
         etSearch = findViewById(R.id.etSearch);
-        String category = getIntent().getStringExtra(Constants.IntentKeys.CATEGORY);
         tvSearchTitle.setText(category);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,11 +87,11 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
 
         @Override
         protected BooksResponse doInBackground(String[] objects) {
-            BooksResponse response = getBooks();
+            BooksResponse response = getBooks(objects[0]);
             return response;
         }
 
-        public BooksResponse getBooks() {
+        public BooksResponse getBooks(String category) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -101,7 +102,7 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
                     .build();
 
             BookService service = retrofit.create(BookService.class);
-            Call<BooksResponse> callSync = service.getBooks();
+            Call<BooksResponse> callSync = service.getBooks("image", category);
 
             try {
                 Response<BooksResponse> response = callSync.execute();
@@ -137,7 +138,7 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new GetBooksTask().execute();
+                        new GetBooksTask().execute(category);
                     }
                 });
     }
