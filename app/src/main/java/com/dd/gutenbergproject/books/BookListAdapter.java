@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.dd.gutenbergproject.R;
 
 import java.util.ArrayList;
@@ -38,7 +39,9 @@ class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> {
         holder.setItem(model);
         holder.getTvBookTitle().setText(model.getBookTitle());
         holder.getTvBookAuthor().setText(model.getBookAuthor());
-        Glide.with(context).load(model.getImage()).into(holder.getIvBookImage());
+        Glide.with(context).load(model.getImage())
+                .transform(new RoundedCorners(30))
+                .into(holder.getIvBookImage());
     }
 
     @Override

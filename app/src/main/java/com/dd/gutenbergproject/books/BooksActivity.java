@@ -1,5 +1,7 @@
 package com.dd.gutenbergproject.books;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -101,7 +103,10 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
 
     @Override
     public void onBookSelect(BookModel bookModel) {
-
+        if (bookModel.getHtmlBook() != null) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(bookModel.getHtmlBook()));
+            startActivity(browserIntent);
+        }
     }
 
     public class GetBooksTask extends AsyncTask<String, Void, BooksResponse> {

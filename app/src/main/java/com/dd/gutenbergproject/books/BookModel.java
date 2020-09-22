@@ -4,11 +4,13 @@ class BookModel {
     private String bookTitle;
     private String bookAuthor;
     private String bookImage;
+    private String htmlBook;
 
-    public BookModel(String bookTitle, String bookAuthor, String bookImage) {
+    public BookModel(String bookTitle, String bookAuthor, String bookImage, String htmlBook) {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.bookImage = bookImage;
+        this.htmlBook = htmlBook;
     }
 
     public String getBookTitle() {
@@ -33,5 +35,13 @@ class BookModel {
 
     public void setBookImage(String bookImage) {
         this.bookImage = bookImage;
+    }
+
+    public String getHtmlBook() {
+        return htmlBook;
+    }
+
+    public void setHtmlBook(String htmlBook) {
+        this.htmlBook = htmlBook;
     }
 }

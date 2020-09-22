@@ -20,7 +20,11 @@ public class BookMapper {
                 if (book.getFormat() != null && book.getFormat().getImageUrl() != null) {
                     image = book.getFormat().getImageUrl();
                 }
-                BookModel bookModel = new BookModel(title, author, image);
+                String htmlBook = "";
+                if (book.getFormat() != null && book.getFormat().getWebBook() != null) {
+                    htmlBook = book.getFormat().getWebBook();
+                }
+                BookModel bookModel = new BookModel(title, author, image, htmlBook);
                 bookModels.add(bookModel);
             }
         }
