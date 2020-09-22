@@ -1,23 +1,35 @@
 package com.dd.gutenbergproject.books;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dd.gutenbergproject.R;
 import com.dd.gutenbergproject.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class BooksActivity extends AppCompatActivity implements OnBookSelectListener {
 
+    private ConstraintLayout parent;
     private TextView tvSearchTitle;
     private ImageView ivBack;
     private EditText etSearch;
@@ -29,25 +41,19 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_books);
+        parent = findViewById(R.id.parent);
+        initRecyclerView();
+        initHeader();
+        GetBooksTask task = new GetBooksTask();
+        task.execute();
+    }
+
+    private void initRecyclerView() {
         rvBooks = findViewById(R.id.rvBooks);
         rvBooks.setLayoutManager(new GridLayoutManager(this, 3));
         rvBooks.setHasFixedSize(true);
         adapter = new BookListAdapter(this);
-        adapter.setList(getList());
         rvBooks.setAdapter(adapter);
-        initHeader();
-    }
-
-    public List<BookModel> getList() {
-        List<BookModel> models = new ArrayList();
-        models.add(new BookModel(getString(R.string.fiction), "Ritesh", R.drawable.ic_fiction));
-        models.add(new BookModel(getString(R.string.drama), "Abhishek", R.drawable.ic_drama));
-        models.add(new BookModel(getString(R.string.humor), "Rana", R.drawable.ic_humour));
-        models.add(new BookModel(getString(R.string.politics), "Digu", R.drawable.ic_politics));
-        models.add(new BookModel(getString(R.string.adventure), "Golu", R.drawable.ic_adventure));
-        models.add(new BookModel(getString(R.string.history), "Lalu", R.drawable.ic_history));
-        models.add(new BookModel(getString(R.string.philosophy), "Ravi", R.drawable.ic_philosophy));
-        return models;
     }
 
     private void initHeader() {
@@ -74,5 +80,65 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
     @Override
     public void onBookSelect(BookModel bookModel) {
 
+    }
+
+    public class GetBooksTask extends AsyncTask<String, Void, BooksResponse> {
+
+        @Override
+        protected BooksResponse doInBackground(String[] objects) {
+            BooksResponse response = getBooks();
+            return response;
+        }
+
+        public BooksResponse getBooks() {
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("http://skunkworks.ignitesol.com:8000/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient.build())
+                    .build();
+
+            BookService service = retrofit.create(BookService.class);
+            Call<BooksResponse> callSync = service.getBooks();
+
+            try {
+                Response<BooksResponse> response = callSync.execute();
+                BooksResponse booksResponse = response.body();
+                Log.d("booksResponse", booksResponse.toString());
+                return booksResponse;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(BooksResponse booksResponse) {
+            super.onPostExecute(booksResponse);
+            if (booksResponse == null) {
+                showMessageForFailure();
+            } else {
+                populateBooks(booksResponse);
+            }
+        }
+    }
+
+    private void populateBooks(BooksResponse booksResponse) {
+        BookMapper mapper = new BookMapper();
+        List<BookModel> books = mapper.convert(booksResponse);
+        adapter.setList(books);
+    }
+
+    private void showMessageForFailure() {
+        Snackbar.make(parent, getString(R.string.something_went_wrong),
+                Snackbar.LENGTH_INDEFINITE).setAction(getString(R.string.retry),
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new GetBooksTask().execute();
+                    }
+                });
     }
 }

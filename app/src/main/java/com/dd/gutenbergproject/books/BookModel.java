@@ -3,9 +3,9 @@ package com.dd.gutenbergproject.books;
 class BookModel {
     private String bookTitle;
     private String bookAuthor;
-    private int bookImage;
+    private String bookImage;
 
-    public BookModel(String bookTitle, String bookAuthor, int bookImage) {
+    public BookModel(String bookTitle, String bookAuthor, String bookImage) {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.bookImage = bookImage;
@@ -19,7 +19,7 @@ class BookModel {
         return bookAuthor;
     }
 
-    public int getImage() {
+    public String getImage() {
         return bookImage;
     }
 
@@ -31,7 +31,7 @@ class BookModel {
         this.bookAuthor = bookAuthor;
     }
 
-    public void setBookImage(int bookImage) {
+    public void setBookImage(String bookImage) {
         this.bookImage = bookImage;
     }
 }

@@ -10,4 +10,6 @@
     <string name="history">History</string>
     <string name="philosophy">Philosophy</string>
     <string name="search">Search</string>
+    <string name="something_went_wrong">Something went wrong! Please try again</string>
+    <string name="retry">Retry</string>
 </resources>

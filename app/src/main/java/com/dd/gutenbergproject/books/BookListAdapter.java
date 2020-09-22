@@ -19,8 +19,6 @@ class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> {
     private final OnBookSelectListener listener;
     List<BookModel> list = new ArrayList<>();
     private Context context;
-    String imageUrl = "https://sid2k11.files.wordpress.com/2012/05/i-am-batman.jpg";
-//https://sid2k11.files.wordpress.com/2012/05/i-am-batman.jpg
 
     public BookListAdapter(OnBookSelectListener listener) {
         this.listener = listener;
@@ -40,7 +38,7 @@ class BookListAdapter extends RecyclerView.Adapter<BookViewHolder> {
         holder.setItem(model);
         holder.getTvBookTitle().setText(model.getBookTitle());
         holder.getTvBookAuthor().setText(model.getBookAuthor());
-        Glide.with(context).load(imageUrl).into(holder.getIvBookImage());
+        Glide.with(context).load(model.getImage()).into(holder.getIvBookImage());
     }
 
     @Override
