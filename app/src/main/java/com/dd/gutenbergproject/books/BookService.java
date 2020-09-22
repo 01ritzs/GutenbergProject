@@ -8,6 +8,7 @@ interface BookService {
     @GET("/books")
     Call<BooksResponse> getBooks(
             @Query("mime_type") String mimeType,
-            @Query("topic") String topic
+            @Query("topic") String topic,
+            @Query("search") String search
     );
 }

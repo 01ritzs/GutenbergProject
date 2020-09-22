@@ -2,6 +2,8 @@ package com.dd.gutenbergproject.books;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -17,7 +19,6 @@ import com.dd.gutenbergproject.R;
 import com.dd.gutenbergproject.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -63,6 +64,7 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
         ivBack = findViewById(R.id.ivBack);
         ivCancel = findViewById(R.id.ivCancel);
         etSearch = findViewById(R.id.etSearch);
+        etSearch.addTextChangedListener(textWatcher);
         tvSearchTitle.setText(category);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +80,25 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
         });
     }
 
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            GetBooksTask task = new GetBooksTask();
+            task.execute(category, charSequence.toString());
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
+
+
     @Override
     public void onBookSelect(BookModel bookModel) {
 
@@ -87,11 +108,12 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
 
         @Override
         protected BooksResponse doInBackground(String[] objects) {
-            BooksResponse response = getBooks(objects[0]);
+            String searchText = objects.length > 1 ? objects[1] : "";
+            BooksResponse response = getBooks(objects[0], searchText);
             return response;
         }
 
-        public BooksResponse getBooks(String category) {
+        public BooksResponse getBooks(String category, String searchText) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -102,7 +124,10 @@ public class BooksActivity extends AppCompatActivity implements OnBookSelectList
                     .build();
 
             BookService service = retrofit.create(BookService.class);
-            Call<BooksResponse> callSync = service.getBooks("image", category);
+            if (searchText == null) {
+                searchText = "";
+            }
+            Call<BooksResponse> callSync = service.getBooks("image", category, searchText);
 
             try {
                 Response<BooksResponse> response = callSync.execute();
